@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using QV_UserManagement.ServiceReference;
 using QV_UserManagement.ServiceSupport;
 using BrightIdeasSoftware;
-
+using System.Threading;
 
 
 namespace QV_UserManagement
@@ -22,6 +22,10 @@ namespace QV_UserManagement
         DataTable dtSelectedUSers = new DataTable();
         DataTable dtUserDocuments = new DataTable();
         bool sourceAdded = false;
+        Guid qvsId = new Guid("00000000-0000-0000-0000-000000000000");
+        Guid dscId = new Guid("00000000-0000-0000-0000-000000000000");
+        bool loadingVisible = false;
+        string key = "";
 
         public Form1()
         {
@@ -41,7 +45,7 @@ namespace QV_UserManagement
 
             
             Client = new QMSClient("BasicHttpBinding_IQMS");
-            string key = Client.GetTimeLimitedServiceKey();
+            key = Client.GetTimeLimitedServiceKey();
             ServiceKeyClientMessageInspector.ServiceKey = key;            
            
         }
@@ -114,18 +118,28 @@ namespace QV_UserManagement
             dtStats.Columns.Add(sID);
             dtStats.Columns.Add(dcMId);
 
-            ServiceInfo[] myServices = Client.GetServices(ServiceTypes.All);
+            List<ServiceInfo> myServices = Client.GetServices(ServiceTypes.All);
             
             foreach (ServiceInfo service in myServices)
             {
-                Guid[] ids = new Guid[1];
-                ids[0] = service.ID;
+                List<Guid> ids = new List<Guid>();
+                ids.Add(service.ID);
                 var stat = Client.GetServiceStatuses(ids);
+
+                if (service.Type == ServiceTypes.QlikViewServer)
+                {
+                    qvsId = service.ID;
+                }
+
+                if (service.Type == ServiceTypes.QlikViewDirectoryServiceConnector)
+                {
+                    dscId = service.ID;
+                }
 
                 //DataTable dtStats = new DataTable();
    
 
-                for (var i = 0; i < stat[0].MemberStatusDetails.Length; i++)
+                for (var i = 0; i < stat[0].MemberStatusDetails.Count; i++)
                 {
                     if (service.Type == ServiceTypes.QlikViewServer)
                     {
@@ -141,7 +155,7 @@ namespace QV_UserManagement
                     dr["Address"] = service.Address;
                     //dtStats.Rows.Add(dr);
 
-                    if (stat[0].MemberStatusDetails[i].Message.Length > 0)
+                    if (stat[0].MemberStatusDetails[i].Message.Count > 0)
                     {
                         dr["Message"] = stat[0].MemberStatusDetails[i].Message[0].ToString();
                     }
@@ -177,10 +191,10 @@ namespace QV_UserManagement
                 var a = new Guid(members[m].Substring(0, members[m].IndexOf('_')));
                 var t = Client.GetQVSDocumentsAndUsers(a, QueryTarget.ClusterMember);
 
-                foreach (KeyValuePair<string, string[]> entry in t)
+                foreach (KeyValuePair<string, List<string>> entry in t)
                 {
                     var doc = entry.Key;
-                    for (int b = 0; b < entry.Value.Length; b++)
+                    for (int b = 0; b < entry.Value.Count; b++)
                     {
                         var executiondate = DateTime.Now.ToString("yyyyMMddHHmmss");
 
@@ -199,7 +213,7 @@ namespace QV_UserManagement
 
         private DataTable GetUserDocuments()
         {
-            var qvsId = new Guid("ea7e3a82-3693-4fee-9ab2-3e9dd8a67148");
+            //var qvsId = new Guid("ea7e3a82-3693-4fee-9ab2-3e9dd8a67148");
 
             DataTable dtDocs = new DataTable();
             DataColumn dName = new DataColumn("Name");
@@ -221,7 +235,15 @@ namespace QV_UserManagement
             dtDocs.Columns.Add(fId);
             dtDocs.Columns.Add(dId);
 
-            var userDocs = Client.GetUserDocuments(qvsId);
+            var userDocs = new List<DocumentNode>();
+            try
+            {
+                userDocs = Client.GetUserDocuments(qvsId);
+            }
+            catch (System.Exception ex)
+            {
+                key = Client.GetTimeLimitedServiceKey();
+            }
 
             foreach (var userDoc in userDocs)
             {
@@ -238,7 +260,7 @@ namespace QV_UserManagement
                 dtDocs.Rows.Add(dr);
             }
 
-            dataListView2.DataSource = dtDocs;
+            //dataListView2.DataSource = dtDocs;
 
             return dtDocs;
         }
@@ -264,9 +286,9 @@ namespace QV_UserManagement
 
                 var t = Client.GetDocumentMetaData(documentNode, DocumentMetaDataScope.Authorization);
 
-                if (t.Authorization.Access.Length > 0)
+                if (t.Authorization.Access.Count > 0)
                 {
-                    for (var b = 0; b < t.Authorization.Access.Length; b++)
+                    for (var b = 0; b < t.Authorization.Access.Count; b++)
                     {
                         DataRow dr = dt.NewRow();
                         dr["FolderID"] = dtDocs.Rows[i]["FolderID"];
@@ -324,19 +346,31 @@ namespace QV_UserManagement
 
         private void button3_Click(object sender, EventArgs e)
         {
-            DataTable dt = GetUserDocuments();            
-            dataListView4.DataSource = dt;
-            
-            for (var i = 0; i < dataListView4.Columns.Count; i++)
+            timer1.Start();
+            try
             {
-                dataListView4.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
-            }
-            //DataGridViewCheckBoxColumn chk = new DataGridViewCheckBoxColumn();
-            //dataGridView3.Columns.Add(chk);
-            //chk.HeaderText = " ";
-            //chk.Name = "chk";
-            //dataGridView3.Columns[dataGridView3.Columns.Count-1].DisplayIndex = 0;
+                DataTable dt = GetUserDocuments();
+                dataListView4.DataSource = dt;
 
+                for (var i = 0; i < dataListView4.Columns.Count; i++)
+                {
+                    dataListView4.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
+                }
+                //DataGridViewCheckBoxColumn chk = new DataGridViewCheckBoxColumn();
+                //dataGridView3.Columns.Add(chk);
+                //chk.HeaderText = " ";
+                //chk.Name = "chk";
+                //dataGridView3.Columns[dataGridView3.Columns.Count-1].DisplayIndex = 0;
+            }
+            catch (System.Exception ex)
+            {
+                timer1.Stop();
+            }
+            finally
+            {
+                timer1.Stop();
+            }
+            
         }
 
         /*private void exportNewData()
@@ -400,39 +434,61 @@ namespace QV_UserManagement
 
         private void button5_Click(object sender, EventArgs e)
         {
-            var dscId = new Guid("295f4414-8d2e-44a0-8b7b-c91c25b6da66");
-            var users = new string[1];
-            users[0] = textBox1.Text;
-            var user = Client.LookupNames(dscId, users);
-
+            //var dscId = new Guid("295f4414-8d2e-44a0-8b7b-c91c25b6da66");
             DataTable dt = new DataTable();
             DataColumn dcId = new DataColumn("Id");
             DataColumn dcName = new DataColumn("Name");
             dt.Columns.Add(dcId);
             dt.Columns.Add(dcName);
 
-            if (user.Length > 0)
-            {
-                for (var i = 0; i < user.Length; i++)
-                {
-                    DataRow dr = dt.NewRow();
-                    dr["Id"] = user[i].Name;
-                    dr["Name"] = user[i].OtherProperty;
-                    dt.Rows.Add(dr);
-                }
 
-                    //label1.Text = user[0].Name + " ," + user[0].OtherProperty;
+            var users = new List<string>();
+            users.Add(textBox1.Text);
+
+            var u = textBox1.Text.Split(';');
+            users = u.ToList<string>();
+
+            foreach (var user in users)
+            {
+                var user1 = new List<string>();
+                user1.Add(user.Trim());
+                var userDetails = Client.LookupNames(dscId, user1);
+
+                if (userDetails.Count > 0)
+                {
+                    for (var i = 0; i < userDetails.Count; i++)
+                    {
+                        DataRow dr = dt.NewRow();
+                        dr["Id"] = userDetails[i].Name;
+                        dr["Name"] = userDetails[i].OtherProperty;
+                        dt.Rows.Add(dr);
+                    }
+
+                        //label1.Text = user[0].Name + " ," + user[0].OtherProperty;
+                }
             }
-            else
+
+            
+
+
+
+
+            /*else
             {
                 DataRow dr = dt.NewRow();
                 dr["Id"] = "Not found";
                 dr["Name"] = "Not found";
                 dt.Rows.Add(dr);
-            }
+            }*/
 
-            dataGridView4.DataSource = dt;
+            dataListView6.DataSource = dt;
+            for (var i = 0; i < dataListView6.Columns.Count; i++)
+            {
+                dataListView6.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
+            }
         }
+
+        
 
         private void button6_Click(object sender, EventArgs e)
         {
@@ -442,15 +498,20 @@ namespace QV_UserManagement
             dt.Columns.Add(dcId);
             dt.Columns.Add(dcName);
 
-            foreach (DataGridViewRow row in dataGridView4.SelectedRows)
+            foreach (DataRowView row in dataListView6.SelectedObjects)
             {
                 DataRow dr = dt.NewRow();
-                dr["Id"] = row.Cells[0].Value;
-                dr["Name"] = row.Cells[1].Value;
+                dr["Id"] = row.Row["ID"];
+                dr["Name"] = row.Row["Name"];
                 dt.Rows.Add(dr);
             }
 
-            dataGridView5.DataSource = dt;
+            dataListView7.DataSource = dt;
+            for (var i = 0; i < dataListView7.Columns.Count; i++)
+            {
+                dataListView7.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
+            }
+
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -481,6 +542,7 @@ namespace QV_UserManagement
             rbtn_doc.Checked = true;
             btn_AddSource.Enabled = false;
             btn_AddTarget.Enabled = false;
+            chb_AutoGetMetadata.Checked = true;
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -600,7 +662,112 @@ namespace QV_UserManagement
             dataListView5.Clear();
         }
 
+        private void button12_Click(object sender, EventArgs e)
+        {            
+            var obj1 = dataListView4.SelectedObjects;
+            for (var a = 0; a < obj1.Count; a++)
+            {
+                DataRowView obj = obj1[a] as DataRowView;
+                DataRow dataBoundItem = obj.Row;
+                
+                DocumentNode dn = new DocumentNode();
+                dn.FolderID = new Guid(dataBoundItem["FolderID"].ToString());
+                dn.ID = new Guid(dataBoundItem["ID"].ToString());
+                dn.Name = dataBoundItem["Name"].ToString();
+                dn.RelativePath = dataBoundItem["RelativePath"].ToString();
+                dn.IsOrphan = Convert.ToBoolean(dataBoundItem["IsOrphan"].ToString());
+                dn.IsSubFolder = Convert.ToBoolean(dataBoundItem["IsSubFolder"].ToString());
+                dn.TaskCount = Convert.ToInt32(dataBoundItem["TaskCount"].ToString());
+                dn.Type = DocumentType.User;
 
+                var meta = Client.GetDocumentMetaData(dn, DocumentMetaDataScope.Authorization);
+                            foreach (object o in dataListView7.Objects)
+                            {
+                                var b1 = o as DataRowView ;
+                                DataRow dataBoundItem1 = b1.Row;
+                                DocumentAccessEntry dae = new DocumentAccessEntry();
+                                dae.UserName = dataBoundItem1["Id"].ToString();
+                                dae.DayOfWeekConstraints = new List<DayOfWeek>();
+
+                                meta.Authorization.Access.Add(dae);                                
+                            }
+                Client.SaveDocumentMetaData(meta);           
+            }
+            
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            var obj1 = dataListView4.SelectedObjects;
+            for (var a = 0; a < obj1.Count; a++)
+            {
+                DataRowView obj = obj1[a] as DataRowView;
+                DataRow dataBoundItem = obj.Row;
+
+                DocumentNode dn = new DocumentNode();
+                dn.FolderID = new Guid(dataBoundItem["FolderID"].ToString());
+                dn.ID = new Guid(dataBoundItem["ID"].ToString());
+                dn.Name = dataBoundItem["Name"].ToString();
+                dn.RelativePath = dataBoundItem["RelativePath"].ToString();
+                dn.IsOrphan = Convert.ToBoolean(dataBoundItem["IsOrphan"].ToString());
+                dn.IsSubFolder = Convert.ToBoolean(dataBoundItem["IsSubFolder"].ToString());
+                dn.TaskCount = Convert.ToInt32(dataBoundItem["TaskCount"].ToString());
+                dn.Type = DocumentType.User;
+
+                var meta = Client.GetDocumentMetaData(dn, DocumentMetaDataScope.Authorization);
+                foreach (object o in dataListView7.Objects)
+                {
+                    var b1 = o as DataRowView;
+                    DataRow dataBoundItem1 = b1.Row;
+
+                    for (var m = 0; m < meta.Authorization.Access.Count; m++)
+                    {
+                        if (meta.Authorization.Access[m].UserName == dataBoundItem1["Id"].ToString())
+                        {
+                            meta.Authorization.Access.RemoveAt(m);
+                        }
+                    }
+
+
+                    //var b1 = o as DataRowView;
+                    //DataRow dataBoundItem1 = b1.Row;
+                    //DocumentAccessEntry dae = new DocumentAccessEntry();
+                    //dae.UserName = dataBoundItem1["Id"].ToString();
+                    //dae.DayOfWeekConstraints = new List<DayOfWeek>();
+                    //dae.AccessMode = DocumentAccessEntryMode.Restricted;
+                    //dae.IsAnonymous = false;
+                    ////dae.UserName
+                    //meta.Authorization.Access.RemoveAt(0);
+                }
+                Client.SaveDocumentMetaData(meta);
+            }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            //label1.Text = "Loading ...";
+            //label1.ForeColor = Color.Red;
+            timer1.Start();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (loadingVisible == false)
+            {
+                label1.Visible = true;
+                loadingVisible = true;
+            }
+            else
+            {
+                label1.Visible = false;
+                loadingVisible = false;
+            }
+        }
 
     }
 }

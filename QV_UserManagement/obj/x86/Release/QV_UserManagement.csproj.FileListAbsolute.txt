@@ -10,3 +10,14 @@ s:\Development\Stefan\QV_UserManagement\QV_UserManagement\obj\x86\Release\QV_Use
 s:\Development\Stefan\QV_UserManagement\QV_UserManagement\bin\Release\ObjectListView.dll
 s:\Development\Stefan\QV_UserManagement\QV_UserManagement\bin\Release\ObjectListView.pdb
 s:\Development\Stefan\QV_UserManagement\QV_UserManagement\bin\Release\ObjectListView.xml
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\bin\Release\QV_UserManagement.exe.config
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\bin\Release\QV_UserManagement.exe
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\bin\Release\QV_UserManagement.pdb
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\bin\Release\ObjectListView.pdb
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\bin\Release\ObjectListView.xml
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QV_UserManagement.csprojResolveAssemblyReference.cache
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QV_UserManagement.Form1.resources
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QV_UserManagement.Properties.Resources.resources
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QV_UserManagement.csproj.GenerateResource.Cache
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QV_UserManagement.exe
+D:\Projects\Personal\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QV_UserManagement.pdb
