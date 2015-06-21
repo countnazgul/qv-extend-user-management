@@ -1,4 +1,4 @@
-﻿namespace QV_UserManagement
+﻿namespace QlikviewEnhancedUserControl
 {
     partial class Form1
     {
@@ -29,20 +29,23 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label3 = new System.Windows.Forms.Label();
+            this.button14 = new System.Windows.Forms.Button();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.dataListView1 = new BrightIdeasSoftware.DataListView();
             this.button2 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataListView2 = new BrightIdeasSoftware.DataListView();
             this.button1 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.button4 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
             this.dataListView7 = new BrightIdeasSoftware.DataListView();
             this.dataListView6 = new BrightIdeasSoftware.DataListView();
             this.button12 = new System.Windows.Forms.Button();
-            this.chb_AutoGetMetadata = new System.Windows.Forms.CheckBox();
-            this.btn_GetDocMetadata = new System.Windows.Forms.Button();
             this.dataListView5 = new BrightIdeasSoftware.DataListView();
             this.btn_AddTarget = new System.Windows.Forms.Button();
             this.btn_AddSource = new System.Windows.Forms.Button();
@@ -60,13 +63,20 @@
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.userDocExport = new System.Windows.Forms.Button();
             this.dataListView3 = new BrightIdeasSoftware.DataListView();
             this.button9 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataListView1)).BeginInit();
@@ -79,6 +89,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataListView4)).BeginInit();
             this.tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataListView3)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -87,23 +98,52 @@
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Location = new System.Drawing.Point(12, 2);
+            this.tabControl1.Location = new System.Drawing.Point(2, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1145, 468);
+            this.tabControl1.Size = new System.Drawing.Size(1165, 468);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label3);
+            this.tabPage1.Controls.Add(this.button14);
+            this.tabPage1.Controls.Add(this.textBox3);
             this.tabPage1.Controls.Add(this.dataListView1);
             this.tabPage1.Controls.Add(this.button2);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1137, 442);
+            this.tabPage1.Size = new System.Drawing.Size(1157, 442);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Services";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(539, 9);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(35, 13);
+            this.label3.TabIndex = 21;
+            this.label3.Text = "label3";
+            // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(377, 4);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(75, 23);
+            this.button14.TabIndex = 20;
+            this.button14.Text = "Save";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(6, 6);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(365, 20);
+            this.textBox3.TabIndex = 3;
             // 
             // dataListView1
             // 
@@ -124,7 +164,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(6, 3);
+            this.button2.Location = new System.Drawing.Point(458, 4);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 2;
@@ -139,7 +179,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1137, 442);
+            this.tabPage2.Size = new System.Drawing.Size(1157, 442);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Active Docs";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -153,7 +193,7 @@
             this.dataListView2.Name = "dataListView2";
             this.dataListView2.ShowCommandMenuOnRightClick = true;
             this.dataListView2.ShowGroups = false;
-            this.dataListView2.Size = new System.Drawing.Size(1125, 404);
+            this.dataListView2.Size = new System.Drawing.Size(1145, 404);
             this.dataListView2.TabIndex = 20;
             this.dataListView2.UseCompatibleStateImageBehavior = false;
             this.dataListView2.UseExplorerTheme = true;
@@ -173,13 +213,11 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.label1);
+            this.tabPage3.Controls.Add(this.button4);
             this.tabPage3.Controls.Add(this.button13);
             this.tabPage3.Controls.Add(this.dataListView7);
             this.tabPage3.Controls.Add(this.dataListView6);
             this.tabPage3.Controls.Add(this.button12);
-            this.tabPage3.Controls.Add(this.chb_AutoGetMetadata);
-            this.tabPage3.Controls.Add(this.btn_GetDocMetadata);
             this.tabPage3.Controls.Add(this.dataListView5);
             this.tabPage3.Controls.Add(this.btn_AddTarget);
             this.tabPage3.Controls.Add(this.btn_AddSource);
@@ -197,41 +235,54 @@
             this.tabPage3.Controls.Add(this.button6);
             this.tabPage3.Controls.Add(this.button5);
             this.tabPage3.Controls.Add(this.textBox1);
-            this.tabPage3.Controls.Add(this.button4);
             this.tabPage3.Controls.Add(this.button3);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(1137, 442);
+            this.tabPage3.Size = new System.Drawing.Size(1157, 442);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "User Mgmt";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(252, 315);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(51, 20);
+            this.button4.TabIndex = 39;
+            this.button4.Text = "Clear";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
+            // 
             // button13
             // 
-            this.button13.Location = new System.Drawing.Point(6, 416);
+            this.button13.Location = new System.Drawing.Point(252, 276);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(297, 23);
+            this.button13.Size = new System.Drawing.Size(51, 22);
             this.button13.TabIndex = 37;
-            this.button13.Text = "Remove selected user(s) to document(s)";
+            this.button13.Text = "<<";
             this.button13.UseVisualStyleBackColor = true;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // dataListView7
             // 
             this.dataListView7.DataSource = null;
-            this.dataListView7.FullRowSelect = true;
+            this.dataListView7.GridLines = true;
             this.dataListView7.HasCollapsibleGroups = false;
-            this.dataListView7.Location = new System.Drawing.Point(6, 263);
+            this.dataListView7.Location = new System.Drawing.Point(6, 235);
+            this.dataListView7.MultiSelect = false;
             this.dataListView7.Name = "dataListView7";
-            this.dataListView7.ShowCommandMenuOnRightClick = true;
+            this.dataListView7.PersistentCheckBoxes = false;
             this.dataListView7.ShowGroups = false;
-            this.dataListView7.Size = new System.Drawing.Size(297, 125);
+            this.dataListView7.ShowImagesOnSubItems = true;
+            this.dataListView7.Size = new System.Drawing.Size(240, 193);
             this.dataListView7.TabIndex = 36;
             this.dataListView7.UseCompatibleStateImageBehavior = false;
             this.dataListView7.UseExplorerTheme = true;
             this.dataListView7.UseFilterIndicator = true;
             this.dataListView7.UseFiltering = true;
+            this.dataListView7.UseSubItemCheckBoxes = true;
             this.dataListView7.View = System.Windows.Forms.View.Details;
+            this.dataListView7.CellEditStarting += new BrightIdeasSoftware.CellEditEventHandler(this.ObjectListView1OnCellEditStarting);
             // 
             // dataListView6
             // 
@@ -249,48 +300,28 @@
             this.dataListView6.UseFilterIndicator = true;
             this.dataListView6.UseFiltering = true;
             this.dataListView6.View = System.Windows.Forms.View.Details;
+            this.dataListView6.DoubleClick += new System.EventHandler(this.dataListView6_DoubleClick);
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(6, 394);
+            this.button12.Location = new System.Drawing.Point(252, 235);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(297, 23);
+            this.button12.Size = new System.Drawing.Size(51, 24);
             this.button12.TabIndex = 34;
-            this.button12.Text = "Add selected user(s) to document(s)";
+            this.button12.Text = ">>";
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
-            // 
-            // chb_AutoGetMetadata
-            // 
-            this.chb_AutoGetMetadata.AutoSize = true;
-            this.chb_AutoGetMetadata.Location = new System.Drawing.Point(312, 236);
-            this.chb_AutoGetMetadata.Name = "chb_AutoGetMetadata";
-            this.chb_AutoGetMetadata.Size = new System.Drawing.Size(113, 17);
-            this.chb_AutoGetMetadata.TabIndex = 33;
-            this.chb_AutoGetMetadata.Text = "Auto get metadata";
-            this.chb_AutoGetMetadata.UseVisualStyleBackColor = true;
-            this.chb_AutoGetMetadata.CheckedChanged += new System.EventHandler(this.chb_AutoGetMetadata_CheckedChanged);
-            // 
-            // btn_GetDocMetadata
-            // 
-            this.btn_GetDocMetadata.Location = new System.Drawing.Point(1056, 232);
-            this.btn_GetDocMetadata.Name = "btn_GetDocMetadata";
-            this.btn_GetDocMetadata.Size = new System.Drawing.Size(75, 23);
-            this.btn_GetDocMetadata.TabIndex = 32;
-            this.btn_GetDocMetadata.Text = "button12";
-            this.btn_GetDocMetadata.UseVisualStyleBackColor = true;
-            this.btn_GetDocMetadata.Click += new System.EventHandler(this.btn_GetDocMetadata_Click);
             // 
             // dataListView5
             // 
             this.dataListView5.DataSource = null;
             this.dataListView5.FullRowSelect = true;
             this.dataListView5.HasCollapsibleGroups = false;
-            this.dataListView5.Location = new System.Drawing.Point(309, 259);
+            this.dataListView5.Location = new System.Drawing.Point(309, 235);
             this.dataListView5.Name = "dataListView5";
             this.dataListView5.ShowCommandMenuOnRightClick = true;
             this.dataListView5.ShowGroups = false;
-            this.dataListView5.Size = new System.Drawing.Size(822, 129);
+            this.dataListView5.Size = new System.Drawing.Size(842, 193);
             this.dataListView5.TabIndex = 31;
             this.dataListView5.UseCompatibleStateImageBehavior = false;
             this.dataListView5.UseExplorerTheme = true;
@@ -376,7 +407,7 @@
             this.dataListView4.Name = "dataListView4";
             this.dataListView4.ShowCommandMenuOnRightClick = true;
             this.dataListView4.ShowGroups = false;
-            this.dataListView4.Size = new System.Drawing.Size(822, 196);
+            this.dataListView4.Size = new System.Drawing.Size(842, 196);
             this.dataListView4.TabIndex = 21;
             this.dataListView4.UseCompatibleStateImageBehavior = false;
             this.dataListView4.UseExplorerTheme = true;
@@ -436,12 +467,13 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(6, 234);
+            this.button6.Location = new System.Drawing.Point(922, 6);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(297, 23);
+            this.button6.Size = new System.Drawing.Size(229, 23);
             this.button6.TabIndex = 10;
             this.button6.Text = "Add selected to list";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Visible = false;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button5
@@ -461,16 +493,6 @@
             this.textBox1.Size = new System.Drawing.Size(240, 20);
             this.textBox1.TabIndex = 6;
             // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(1056, 3);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 5;
-            this.button4.Text = "Export";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(309, 3);
@@ -483,14 +505,47 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.label1);
+            this.tabPage4.Controls.Add(this.progressBar1);
+            this.tabPage4.Controls.Add(this.userDocExport);
             this.tabPage4.Controls.Add(this.dataListView3);
             this.tabPage4.Controls.Add(this.button9);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(1137, 442);
+            this.tabPage4.Size = new System.Drawing.Size(1157, 442);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Users <--> Docs";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(583, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 23;
+            this.label1.Text = "label1";
+            this.label1.Visible = false;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(87, 5);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(489, 23);
+            this.progressBar1.Step = 1;
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar1.TabIndex = 3;
+            this.progressBar1.Visible = false;
+            // 
+            // userDocExport
+            // 
+            this.userDocExport.Location = new System.Drawing.Point(1076, 5);
+            this.userDocExport.Name = "userDocExport";
+            this.userDocExport.Size = new System.Drawing.Size(75, 23);
+            this.userDocExport.TabIndex = 22;
+            this.userDocExport.Text = "Export";
+            this.userDocExport.UseVisualStyleBackColor = true;
+            this.userDocExport.Click += new System.EventHandler(this.userDocExport_Click);
             // 
             // dataListView3
             // 
@@ -500,7 +555,7 @@
             this.dataListView3.Location = new System.Drawing.Point(6, 34);
             this.dataListView3.Name = "dataListView3";
             this.dataListView3.ShowCommandMenuOnRightClick = true;
-            this.dataListView3.Size = new System.Drawing.Size(1125, 404);
+            this.dataListView3.Size = new System.Drawing.Size(1145, 404);
             this.dataListView3.TabIndex = 21;
             this.dataListView3.UseCompatibleStateImageBehavior = false;
             this.dataListView3.UseExplorerTheme = true;
@@ -518,34 +573,68 @@
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.ForeColor = System.Drawing.Color.Red;
-            this.label1.Location = new System.Drawing.Point(309, 420);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 20);
-            this.label1.TabIndex = 38;
-            this.label1.Text = "Loading ...";
-            this.label1.Visible = false;
-            // 
             // timer1
             // 
             this.timer1.Interval = 200;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.WorkerReportsProgress = true;
+            this.backgroundWorker1.WorkerSupportsCancellation = true;
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.notifyIcon1.BalloonTipText = "Qlikview Enhanced User Control is minimized";
+            this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "Qlikview Enhanced User Control";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.restoreToolStripMenuItem,
+            this.exitToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 70);
+            // 
+            // restoreToolStripMenuItem
+            // 
+            this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.restoreToolStripMenuItem.Text = "Restore";
+            this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1169, 482);
+            this.ClientSize = new System.Drawing.Size(1169, 472);
             this.Controls.Add(this.tabControl1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Qlikview Enhanced User Control";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataListView1)).EndInit();
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataListView2)).EndInit();
@@ -556,7 +645,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataListView5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataListView4)).EndInit();
             this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataListView3)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -570,7 +661,6 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button6;
@@ -593,14 +683,24 @@
         private System.Windows.Forms.Button btn_AddTarget;
         private System.Windows.Forms.Button btn_AddSource;
         private BrightIdeasSoftware.DataListView dataListView5;
-        private System.Windows.Forms.CheckBox chb_AutoGetMetadata;
-        private System.Windows.Forms.Button btn_GetDocMetadata;
         private System.Windows.Forms.Button button12;
         private BrightIdeasSoftware.DataListView dataListView6;
         private BrightIdeasSoftware.DataListView dataListView7;
         private System.Windows.Forms.Button button13;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button button14;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button userDocExport;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.Button button4;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem restoreToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 

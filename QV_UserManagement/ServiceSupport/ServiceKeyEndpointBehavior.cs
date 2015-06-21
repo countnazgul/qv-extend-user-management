@@ -2,7 +2,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 
-namespace QV_UserManagement.ServiceSupport
+namespace QlikviewEnhancedUserControl.ServiceSupport
 {
     public class ServiceKeyEndpointBehavior : IEndpointBehavior
     {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QV_UserManagement", "QV_UserManagement\QV_UserManagement.csproj", "{F79DC66B-7B60-4993-A565-256C7001DB67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QlikviewEnhancedUserControl", "QV_UserManagement\QlikviewEnhancedUserControl.csproj", "{F79DC66B-7B60-4993-A565-256C7001DB67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

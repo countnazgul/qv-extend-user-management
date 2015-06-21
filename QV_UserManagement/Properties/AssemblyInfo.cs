@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("QV_UserManagement")]
+[assembly: AssemblyTitle("Qlikview Enhanced User Control")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Virgin Media")]
-[assembly: AssemblyProduct("QV_UserManagement")]
-[assembly: AssemblyCopyright("Copyright © Virgin Media 2015")]
+[assembly: AssemblyCompany("stefan.stoichev@gmail.com")]
+[assembly: AssemblyProduct("Qlikview Enhanced User Control")]
+[assembly: AssemblyCopyright("stefan.stoichev@gmail.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.3.0.0")]
+[assembly: AssemblyFileVersion("0.3.0.0")]

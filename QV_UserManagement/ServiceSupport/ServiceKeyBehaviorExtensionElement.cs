@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Configuration;
 using System.ServiceModel.Configuration;
-using QV_UserManagement.ServiceSupport;
+using QlikviewEnhancedUserControl.ServiceSupport;
 
-namespace QV_UserManagement.ServiceSupport
+namespace QlikviewEnhancedUserControl.ServiceSupport
 {
     public class ServiceKeyBehaviorExtensionElement : BehaviorExtensionElement
     {

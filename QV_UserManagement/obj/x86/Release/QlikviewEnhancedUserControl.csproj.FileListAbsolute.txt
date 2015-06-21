@@ -1,0 +1,10 @@
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\bin\Release\ObjectListView.pdb
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\bin\Release\ObjectListView.xml
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QlikviewEnhancedUserControl.csproj.GenerateResource.Cache
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QlikviewEnhancedUserControl.Properties.Resources.resources
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\bin\Release\QlikviewEnhancedUserControl.exe.config
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\bin\Release\QlikviewEnhancedUserControl.exe
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\bin\Release\QlikviewEnhancedUserControl.pdb
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QlikviewEnhancedUserControl.exe
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QlikviewEnhancedUserControl.pdb
+D:\Projects\Personal\GitHub\qv-extend-user-management\QV_UserManagement\obj\x86\Release\QlikviewEnhancedUserControl.Form1.resources

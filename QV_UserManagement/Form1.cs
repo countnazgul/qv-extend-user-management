@@ -7,13 +7,14 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
-using QV_UserManagement.ServiceReference;
-using QV_UserManagement.ServiceSupport;
+using QlikviewEnhancedUserControl.ServiceReference;
+using QlikviewEnhancedUserControl.ServiceSupport;
 using BrightIdeasSoftware;
 using System.Threading;
+using System.Configuration;
 
 
-namespace QV_UserManagement
+namespace QlikviewEnhancedUserControl
 {
     public partial class Form1 : Form
     {
@@ -21,16 +22,32 @@ namespace QV_UserManagement
         List<string> QVS = new List<string>();
         DataTable dtSelectedUSers = new DataTable();
         DataTable dtUserDocuments = new DataTable();
+        DataTable dtUsersAndDocs = new DataTable();
         bool sourceAdded = false;
         Guid qvsId = new Guid("00000000-0000-0000-0000-000000000000");
         Guid dscId = new Guid("00000000-0000-0000-0000-000000000000");
         bool loadingVisible = false;
         string key = "";
+        string qms = "";
+        string server = "";
+        TabPage tb1 = null;
+        TabPage tb2 = null;
+        TabPage tb3 = null;
+        int totalUserDocs = 0;
+        //BrightIdeasSoftware.OLVColumn deleteColumn = new BrightIdeasSoftware.OLVColumn();
+
+
 
         public Form1()
         {
             InitializeComponent();
+            tb1 = tabControl1.TabPages[1];
+            tb2 = tabControl1.TabPages[2];
+            tb3 = tabControl1.TabPages[3];
 
+            tabControl1.TabPages.Remove(tb1);
+            tabControl1.TabPages.Remove(tb2);
+            tabControl1.TabPages.Remove(tb3);
             //DataTable dtServices = new DataTable();
             //DataColumn sID = new DataColumn("ID");
             //DataColumn sName = new DataColumn("Name");
@@ -42,12 +59,6 @@ namespace QV_UserManagement
             //dtServices.Columns.Add(sAddress);
             //dtServices.Columns.Add(sNodeCount);
             //dtServices.Columns.Add(sID);    
-
-            
-            Client = new QMSClient("BasicHttpBinding_IQMS");
-            key = Client.GetTimeLimitedServiceKey();
-            ServiceKeyClientMessageInspector.ServiceKey = key;            
-           
         }
 
 
@@ -270,19 +281,22 @@ namespace QV_UserManagement
             DataTable dt = dtDocs.Clone();
             DataColumn dcUser = new DataColumn("User");
             dt.Columns.Add(dcUser);
+            dt.Columns["User"].SetOrdinal(1);
+
+            backgroundWorker1.ReportProgress(dtDocs.Rows.Count, "totalDocs");
 
             for (var i = 0; i < dtDocs.Rows.Count; i++)
             {
 
                 var documentNode = new DocumentNode();
+                documentNode.Type = DocumentType.User;
                 documentNode.FolderID = new Guid(dtDocs.Rows[i]["FolderID"].ToString());
                 documentNode.ID = new Guid(dtDocs.Rows[i]["ID"].ToString());
                 documentNode.Name = dtDocs.Rows[i]["Name"].ToString();
                 documentNode.IsOrphan = Convert.ToBoolean(dtDocs.Rows[i]["IsOrphan"]);
                 documentNode.IsSubFolder = Convert.ToBoolean(dtDocs.Rows[i]["IsSubFolder"]);
                 documentNode.RelativePath = dtDocs.Rows[i]["RelativePath"].ToString();
-                documentNode.TaskCount = Convert.ToInt32(dtDocs.Rows[i]["TaskCount"]);
-                documentNode.Type = DocumentType.User;
+                documentNode.TaskCount = Convert.ToInt32(dtDocs.Rows[i]["TaskCount"]);                
 
                 var t = Client.GetDocumentMetaData(documentNode, DocumentMetaDataScope.Authorization);
 
@@ -291,6 +305,7 @@ namespace QV_UserManagement
                     for (var b = 0; b < t.Authorization.Access.Count; b++)
                     {
                         DataRow dr = dt.NewRow();
+                        dr["User"] = t.Authorization.Access[b].UserName;
                         dr["FolderID"] = dtDocs.Rows[i]["FolderID"];
                         dr["ID"] = dtDocs.Rows[i]["ID"];
                         dr["IsOrphan"] = dtDocs.Rows[i]["IsOrphan"];
@@ -298,14 +313,14 @@ namespace QV_UserManagement
                         dr["Name"] = dtDocs.Rows[i]["Name"];
                         dr["RelativePath"] = dtDocs.Rows[i]["RelativePath"];
                         dr["TaskCount"] = dtDocs.Rows[i]["TaskCount"];
-                        dr["Type"] = dtDocs.Rows[i]["Type"];
-                        dr["User"] = t.Authorization.Access[b].UserName;
+                        dr["Type"] = dtDocs.Rows[i]["Type"];                        
                         dt.Rows.Add(dr);
                     }
                 }
                 else
                 {
                     DataRow dr = dt.NewRow();
+                    dr["User"] = "NONE";
                     dr["FolderID"] = dtDocs.Rows[i]["FolderID"];
                     dr["ID"] = dtDocs.Rows[i]["ID"];
                     dr["IsOrphan"] = dtDocs.Rows[i]["IsOrphan"];
@@ -313,11 +328,15 @@ namespace QV_UserManagement
                     dr["Name"] = dtDocs.Rows[i]["Name"];
                     dr["RelativePath"] = dtDocs.Rows[i]["RelativePath"];
                     dr["TaskCount"] = dtDocs.Rows[i]["TaskCount"];
-                    dr["Type"] = dtDocs.Rows[i]["Type"];
-                    dr["User"] = "NONE";
+                    dr["Type"] = dtDocs.Rows[i]["Type"];                    
                     dt.Rows.Add(dr);
                 }
+
+                backgroundWorker1.ReportProgress(i, "processeddocs");
+                Thread.Sleep(200);
             }
+            
+
             return dt;
         }
 
@@ -335,13 +354,7 @@ namespace QV_UserManagement
 
         private void button2_Click(object sender, EventArgs e)
         {
-            DataTable dt = GetServicesStatuses();
-            dataListView1.DataSource = dt;
-
-            for (var i = 0; i < dataListView1.Columns.Count; i++)
-            {
-                dataListView1.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
-            }
+            Refresh();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -371,6 +384,41 @@ namespace QV_UserManagement
                 timer1.Stop();
             }
             
+        }
+
+        private void Refresh()
+        {
+            label3.Text = "";
+
+            //try
+            {
+                Client = new QMSClient("BasicHttpBinding_IQMS", qms);
+                key = Client.GetTimeLimitedServiceKey();
+                ServiceKeyClientMessageInspector.ServiceKey = key;
+
+                DataTable dt = GetServicesStatuses();
+                dataListView1.DataSource = dt;
+
+                for (var i = 0; i < dataListView1.Columns.Count; i++)
+                {
+                    dataListView1.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
+                }
+
+                tabControl1.TabPages.Remove(tb1);
+                tabControl1.TabPages.Remove(tb2);
+                tabControl1.TabPages.Remove(tb3);
+                tabControl1.TabPages.Add(tb1);
+                tabControl1.TabPages.Add(tb2);
+                tabControl1.TabPages.Add(tb3);
+            }
+            //catch (System.Exception ex)
+            //{
+            //    dataListView1.Clear();
+            //    tabControl1.TabPages.Remove(tb1);
+            //    tabControl1.TabPages.Remove(tb2);
+            //    tabControl1.TabPages.Remove(tb3);
+            //    label3.Text = "Cannot establish connection to the server.";
+            //}
         }
 
         /*private void exportNewData()
@@ -428,13 +476,14 @@ namespace QV_UserManagement
         private void button4_Click(object sender, EventArgs e)
         {
             //exportNewData();
-            OLVExporter ex = new OLVExporter(dataListView4, dataListView4.FilteredObjects);
-            string test = ex.ExportTo(OLVExporter.ExportFormat.CSV);
+            //OLVExporter ex = new OLVExporter(dataListView4, dataListView4.FilteredObjects);
+            //string test = ex.ExportTo(OLVExporter.ExportFormat.CSV);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            //var dscId = new Guid("295f4414-8d2e-44a0-8b7b-c91c25b6da66");
+            dataListView6.Clear();
+
             DataTable dt = new DataTable();
             DataColumn dcId = new DataColumn("Id");
             DataColumn dcName = new DataColumn("Name");
@@ -463,23 +512,8 @@ namespace QV_UserManagement
                         dr["Name"] = userDetails[i].OtherProperty;
                         dt.Rows.Add(dr);
                     }
-
-                        //label1.Text = user[0].Name + " ," + user[0].OtherProperty;
                 }
             }
-
-            
-
-
-
-
-            /*else
-            {
-                DataRow dr = dt.NewRow();
-                dr["Id"] = "Not found";
-                dr["Name"] = "Not found";
-                dt.Rows.Add(dr);
-            }*/
 
             dataListView6.DataSource = dt;
             for (var i = 0; i < dataListView6.Columns.Count; i++)
@@ -487,31 +521,44 @@ namespace QV_UserManagement
                 dataListView6.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
             }
         }
-
         
-
         private void button6_Click(object sender, EventArgs e)
         {
-            DataTable dt = new DataTable();
-            DataColumn dcId = new DataColumn("Id");
-            DataColumn dcName = new DataColumn("Name");
-            dt.Columns.Add(dcId);
-            dt.Columns.Add(dcName);
+            AddUserToList();
 
+            //dataListView7.Columns.Add(deleteColumn);
+        }
+
+        private void AddUserToList()
+        {
             foreach (DataRowView row in dataListView6.SelectedObjects)
             {
-                DataRow dr = dt.NewRow();
-                dr["Id"] = row.Row["ID"];
-                dr["Name"] = row.Row["Name"];
-                dt.Rows.Add(dr);
+                bool present = false;
+
+                for (int i = 0; i < dtSelectedUSers.Rows.Count; i++)
+                {
+                    if (dtSelectedUSers.Rows[i]["ID"].ToString() == row.Row["ID"].ToString())
+                    {
+                        present = true;
+                        break;
+                    }
+                }
+
+                if (present == false)
+                {
+                    DataRow dr = dtSelectedUSers.NewRow();
+                    dr["Id"] = row.Row["ID"];
+                    dr["Name"] = row.Row["Name"];
+                    dtSelectedUSers.Rows.Add(dr);
+                }
             }
 
-            dataListView7.DataSource = dt;
+            dataListView7.DataSource = dtSelectedUSers;
             for (var i = 0; i < dataListView7.Columns.Count; i++)
             {
                 dataListView7.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
-            }
 
+            }
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -539,22 +586,76 @@ namespace QV_UserManagement
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            DataColumn dcId = new DataColumn("Id");
+            DataColumn dcName = new DataColumn("Name");
+            dtSelectedUSers.Columns.Add(dcId);
+            dtSelectedUSers.Columns.Add(dcName);
+            //dtSelectedUSers.Columns.Add(deleteColumn);
+
+            System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
+            ToolTip1.SetToolTip(this.textBox1, "Single user or multiple users separated with ';'. Use '*' for wildcard");
+            ToolTip1.SetToolTip(this.button12, "ADD user from the left to the documents on the right");
+            ToolTip1.SetToolTip(this.button13, "REMOVE user from the left from the documents on the right");
+            ToolTip1.SetToolTip(this.textBox3, "For example: http://localhost:4799/QMS/Service");        
+
+            label3.Text = "";
             rbtn_doc.Checked = true;
             btn_AddSource.Enabled = false;
             btn_AddTarget.Enabled = false;
-            chb_AutoGetMetadata.Checked = true;
+            //chb_AutoGetMetadata.Checked = true;
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
+            qms = config.AppSettings.Settings["qms"].Value.ToString();
+            textBox3.Text = qms;
+            server = qms.Substring(qms.IndexOf("//") + 2, qms.Length - qms.IndexOf("/QMS") - 3);
+            //string qms = "http://localhost:4799/QMS/Service";
+            if (qms.Trim().Length > 0)
+            {
+                Refresh();
+                button2.Enabled = true;
+            }
+
+            //dataListView7.CellEditActivation = ObjectListView.CellEditActivateMode.SingleClick;
+            //dataListView7.CellEditStarting += ObjectListView1OnCellEditStarting;
+
+            //deleteColumn.IsEditable = true;
+            //deleteColumn.AspectGetter = delegate
+            //{
+                //return "Delete";
+            //};
+        }
+
+        private void ObjectListView1OnCellEditStarting(object sender, CellEditEventArgs e)
+        {
+            // special cell edit handling for our delete-row
+            //if (e.Column == deleteColumn)
+            {
+            //    e.Cancel = true;        // we don't want to edit anything
+            //    dataListView7.RemoveObject(e.RowObject); // remove object
+            }
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            DataTable dt = GetUserDocuments();
-            DataTable dt1 = GetDocumentsMetadata(dt);
-            dataListView3.DataSource = dt1;
+            totalUserDocs = 0;         
+            dtUsersAndDocs.Clear();
+            progressBar1.Visible = true;
+            label1.Visible = true;
+            button9.Enabled = false;
+            userDocExport.Enabled = false;
+            timer1.Start();
+            backgroundWorker1.RunWorkerAsync();
 
-            for (var i = 0; i < dataListView3.Columns.Count; i++)
-            {
-                dataListView3.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
-            }
+            //Thread.Sleep(5000);
+            //DataTable dt = GetUserDocuments();
+            //DataTable dt1 = GetDocumentsMetadata(dt);
+            //dataListView3.DataSource = dt1;
+
+            
+
+            //backgroundWorker1.CancelAsync();
+            
+            
         }
 
         private void btn_AddSource_Click(object sender, EventArgs e)
@@ -584,10 +685,10 @@ namespace QV_UserManagement
                 btn_AddTarget.Enabled = false;
             }
 
-            if (chb_AutoGetMetadata.Checked == true)
-            {
+            //if (chb_AutoGetMetadata.Checked == true)
+            //{
                 GetDocMetadata();
-            }
+            //}
 
 
         }
@@ -654,7 +755,7 @@ namespace QV_UserManagement
 
         private void btn_GetDocMetadata_Click(object sender, EventArgs e)
         {
-            GetDocMetadata();
+            //GetDocMetadata();
         }
 
         private void chb_AutoGetMetadata_CheckedChanged(object sender, EventArgs e)
@@ -693,7 +794,9 @@ namespace QV_UserManagement
                             }
                 Client.SaveDocumentMetaData(meta);           
             }
-            
+
+            dtSelectedUSers.Clear();
+            GetDocMetadata();
         }
 
         private void button13_Click(object sender, EventArgs e)
@@ -741,6 +844,9 @@ namespace QV_UserManagement
                 }
                 Client.SaveDocumentMetaData(meta);
             }
+
+            dtSelectedUSers.Clear();
+            GetDocMetadata();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -752,22 +858,157 @@ namespace QV_UserManagement
         {
             //label1.Text = "Loading ...";
             //label1.ForeColor = Color.Red;
-            timer1.Start();
+            //timer1.Start();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (loadingVisible == false)
+            //label1.Text = "Loading ...";
+            //label1.ForeColor = Color.Red;
+
+            //if (loadingVisible == false)
+            //{
+            //    label1.Visible = true;
+            //    loadingVisible = true;
+            //}
+            //else
+            //{
+            //    label1.Visible = false;
+            //    loadingVisible = false;
+            //}
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
+            config.AppSettings.Settings["qms"].Value = textBox3.Text;
+            config.Save(ConfigurationSaveMode.Modified);
+            qms = textBox3.Text;
+            label3.Text = "";
+            server = qms.Substring(qms.IndexOf("//") + 2, qms.Length - qms.IndexOf("/QMS") - 3);
+        }
+
+        private void userDocExport_Click(object sender, EventArgs e)
+        {
+            DateTime dt = DateTime.Now;    
+            saveFileDialog1.FileName = server + "_docs-and-users_" + dt.ToString("yyyyMMdd-HHmmss") + ".csv";
+            //saveFileDialog1.ShowDialog();
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                label1.Visible = true;
-                loadingVisible = true;
-            }
-            else
-            {
-                label1.Visible = false;
-                loadingVisible = false;
+                if (dataListView3.Columns.Count > 0)
+                {
+                    OLVExporter ex = new OLVExporter(dataListView3, dataListView3.FilteredObjects);
+                    string test = ex.ExportTo(OLVExporter.ExportFormat.CSV);
+                    string fileName = saveFileDialog1.FileName;
+                    System.IO.File.WriteAllText(fileName, test);
+                }
             }
         }
 
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            dtSelectedUSers.Clear();
+        }
+
+        private void dataListView6_DoubleClick(object sender, EventArgs e)
+        {
+            AddUserToList();
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                DataTable dt = GetUserDocuments();
+                dtUsersAndDocs = GetDocumentsMetadata(dt);
+                backgroundWorker1.ReportProgress(100, "done");
+            }
+            catch (System.Exception ex)
+            {
+                backgroundWorker1.ReportProgress(100, ex.Message);
+            }
+            finally
+            {
+
+            }
+                
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBar1.Visible = false;
+            label1.Visible = false;
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+
+
+            if (e.UserState.ToString() == "done")
+            {
+                timer1.Stop();
+                button9.Enabled = false;
+                userDocExport.Enabled = false;
+
+                dataListView3.DataSource = dtUsersAndDocs;
+                for (var i = 0; i < dataListView3.Columns.Count; i++)
+                {
+                    dataListView3.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
+                }
+
+                button9.Enabled = true;
+                userDocExport.Enabled = true;
+            }
+
+            if (e.UserState.ToString() == "error")
+            {
+                //timer1.Stop();
+                button9.Enabled = true;
+                userDocExport.Enabled = true;
+                progressBar1.Visible = false;
+                label1.Visible = false;
+            }
+            
+            if (e.UserState.ToString() == "totalDocs")
+            {
+                progressBar1.Maximum = e.ProgressPercentage;
+                totalUserDocs = e.ProgressPercentage;
+                label1.Text = "0 / " + e.ProgressPercentage;
+            }            
+
+            if (e.UserState.ToString() == "processeddocs")
+            {                
+                progressBar1.Increment(1);
+                label1.Text = progressBar1.Value + " / " + totalUserDocs;
+            }
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+
+                notifyIcon1.ShowBalloonTip(500);
+                this.Hide();
+            }
+        }
+
+        private void notifyIcon1_DoubleClick(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+        }
+
+        private void restoreToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
