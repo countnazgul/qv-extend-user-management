@@ -15,3 +15,8 @@ To be added:
 can be added manually. In the next release there will be an option to import these backups
 
 # Screenshots
+![Services Status](https://raw.githubusercontent.com/countnazgul/qv-extend-user-management/master/QV_UserManagement/Screenshots/Services_v0.3.png)
+
+![User Management](https://raw.githubusercontent.com/countnazgul/qv-extend-user-management/master/QV_UserManagement/Screenshots/UserMgmt_v0.3.png)
+
+![Users and Docs](https://raw.githubusercontent.com/countnazgul/qv-extend-user-management/master/QV_UserManagement/Screenshots/UsersDocs_v0.3.png)
