@@ -12,6 +12,7 @@ using QlikviewEnhancedUserControl.ServiceSupport;
 using BrightIdeasSoftware;
 using System.Threading;
 using System.Configuration;
+using System.DirectoryServices.AccountManagement;
 
 
 namespace QlikviewEnhancedUserControl
@@ -200,7 +201,19 @@ namespace QlikviewEnhancedUserControl
             for (int m = 0; m < members.Count; m++)
             {
                 var a = new Guid(members[m].Substring(0, members[m].IndexOf('_')));
-                var t = Client.GetQVSDocumentsAndUsers(a, QueryTarget.ClusterMember);
+
+                var t = new Dictionary<string, List<string>>();
+
+                try
+                {
+                    t = Client.GetQVSDocumentsAndUsers(a, QueryTarget.ClusterMember);
+                }
+                catch (System.Exception ex)
+                {
+                    key = Client.GetTimeLimitedServiceKey();
+                    ServiceKeyClientMessageInspector.ServiceKey = key;
+                    t = Client.GetQVSDocumentsAndUsers(a, QueryTarget.ClusterMember);
+                }
 
                 foreach (KeyValuePair<string, List<string>> entry in t)
                 {
@@ -249,11 +262,15 @@ namespace QlikviewEnhancedUserControl
             var userDocs = new List<DocumentNode>();
             try
             {
+                Client.ClearQVSCache(QVSCacheObjects.UserDocumentList);
                 userDocs = Client.GetUserDocuments(qvsId);
             }
             catch (System.Exception ex)
             {
                 key = Client.GetTimeLimitedServiceKey();
+                ServiceKeyClientMessageInspector.ServiceKey = key;
+                Client.ClearQVSCache(QVSCacheObjects.UserDocumentList);
+                userDocs = Client.GetUserDocuments(qvsId);
             }
 
             foreach (var userDoc in userDocs)
@@ -296,9 +313,20 @@ namespace QlikviewEnhancedUserControl
                 documentNode.IsOrphan = Convert.ToBoolean(dtDocs.Rows[i]["IsOrphan"]);
                 documentNode.IsSubFolder = Convert.ToBoolean(dtDocs.Rows[i]["IsSubFolder"]);
                 documentNode.RelativePath = dtDocs.Rows[i]["RelativePath"].ToString();
-                documentNode.TaskCount = Convert.ToInt32(dtDocs.Rows[i]["TaskCount"]);                
+                documentNode.TaskCount = Convert.ToInt32(dtDocs.Rows[i]["TaskCount"]);
 
-                var t = Client.GetDocumentMetaData(documentNode, DocumentMetaDataScope.Authorization);
+                DocumentMetaData t = new DocumentMetaData();
+
+                try
+                {
+                    t = Client.GetDocumentMetaData(documentNode, DocumentMetaDataScope.Authorization);
+                }
+                catch (System.Exception ex)
+                {
+                    key = Client.GetTimeLimitedServiceKey();
+                    ServiceKeyClientMessageInspector.ServiceKey = key;
+                    t = Client.GetDocumentMetaData(documentNode, DocumentMetaDataScope.Authorization);
+                }
 
                 if (t.Authorization.Access.Count > 0)
                 {
@@ -359,7 +387,7 @@ namespace QlikviewEnhancedUserControl
 
         private void button3_Click(object sender, EventArgs e)
         {
-            timer1.Start();
+            //timer1.Start();
             try
             {
                 DataTable dt = GetUserDocuments();
@@ -377,11 +405,12 @@ namespace QlikviewEnhancedUserControl
             }
             catch (System.Exception ex)
             {
-                timer1.Stop();
+                //key = Client.GetTimeLimitedServiceKey();
+                //ServiceKeyClientMessageInspector.ServiceKey = key;
             }
             finally
             {
-                timer1.Stop();
+                //timer1.Stop();
             }
             
         }
@@ -1009,6 +1038,38 @@ namespace QlikviewEnhancedUserControl
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
+
+            GroupPrincipal group = GroupPrincipal.FindByIdentity(ctx, "systems\\GRP-Qlikview-GrBI-Mob-Users-G");
+            var users = group.GetMembers();
+
+            if (group != null)
+            {
+                // iterate over members
+                foreach (Principal p in group.GetMembers())
+                {
+                    //Console.WriteLine("{0}: {1}", p.StructuralObjectClass, p.DisplayName);
+
+                    // do whatever you need to do to those members
+                    UserPrincipal theUser = p as UserPrincipal;
+
+                    if (theUser != null)
+                    {
+                        if (theUser.IsAccountLockedOut())
+                        {
+
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -18,3 +18,14 @@ D:\Projects\Personal\GitHub\qv-extend-user-management\QlikviewEnhancedUserContro
 D:\Projects\Personal\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.Form1.resources
 D:\Projects\Personal\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.Properties.Resources.resources
 D:\Projects\Personal\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.csproj.GenerateResource.Cache
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\QlikviewEnhancedUserControl.exe.config
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.exe
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.pdb
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.csprojResolveAssemblyReference.cache
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.Form1.resources
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.Properties.Resources.resources
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.csproj.GenerateResource.Cache
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\QlikviewEnhancedUserControl.exe
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\QlikviewEnhancedUserControl.pdb
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\ObjectListView.pdb
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\ObjectListView.xml
