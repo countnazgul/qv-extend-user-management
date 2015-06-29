@@ -14,7 +14,7 @@ v.0.4.0 (29/06/2015)
 
 To be added:
 
-~~* Copy users from one doc to another (with option to append)~~ (added in v0.4.0)
+* ~~Copy users from one doc to another (with option to append)~~ (added in v0.4.0)
 * Clear user from document(s)
 * During the server issue we've lost all users<->doc link. At the moment the app can only export this list and the users 
 can be added manually. In the next release there will be an option to import these backups
