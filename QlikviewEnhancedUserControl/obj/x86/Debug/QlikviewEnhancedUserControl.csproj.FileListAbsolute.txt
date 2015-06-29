@@ -32,3 +32,4 @@ S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserContr
 D:\Projects\Personal\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.csprojResolveAssemblyReference.cache
 D:\Projects\Personal\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\System.Windows.Forms.Ribbon35.dll
 D:\Projects\Personal\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.AboutBox1.resources
+S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.AboutBox1.resources

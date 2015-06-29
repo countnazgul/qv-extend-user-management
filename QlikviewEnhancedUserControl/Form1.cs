@@ -378,7 +378,7 @@ namespace QlikviewEnhancedUserControl
             return dt;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void GetActiveUsers()
         {
             DataTable dt = GetActiveUserAndDocs(QVS);
             dataListView2.DataSource = dt;
@@ -387,6 +387,16 @@ namespace QlikviewEnhancedUserControl
             {
                 dataListView2.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            GetActiveUsers();
+
+            numericUpDown1.Enabled = true;
+            button16.Enabled = true;
+            button16.Enabled = true;
+            textBox4.Enabled = true;
 
         }
 
@@ -653,6 +663,10 @@ namespace QlikviewEnhancedUserControl
             dtSelectedUSers.Columns.Add(dcId);
             dtSelectedUSers.Columns.Add(dcName);
             //dtSelectedUSers.Columns.Add(deleteColumn);
+            numericUpDown1.Enabled = false;
+            button16.Enabled = false;
+            button16.Enabled = false;
+            textBox4.Enabled = false;
 
             System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
             ToolTip1.SetToolTip(this.textBox1, "Single user or multiple users separated with ';'. Use '*' for wildcard");
@@ -670,6 +684,17 @@ namespace QlikviewEnhancedUserControl
             Configuration config = ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
             qms = config.AppSettings.Settings["qms"].Value.ToString();
             textBox3.Text = qms;
+
+            //if (config.AppSettings.Settings["activedocspath"].Value.ToString().Length == 0)
+            //{
+            //    textBox4.Text = System.Reflection.Assembly.GetEntryAssembly().Location;
+            //}
+            //else
+            //{
+                textBox4.Text = config.AppSettings.Settings["activedocspath"].Value.ToString();
+                numericUpDown1.Value = Convert.ToInt32(config.AppSettings.Settings["activedocsinterval"].Value);
+            //}
+
             server = qms.Substring(qms.IndexOf("//") + 2, qms.Length - qms.IndexOf("/QMS") - 3);
             //string qms = "http://localhost:4799/QMS/Service";
             if (qms.Trim().Length > 0)
@@ -1283,6 +1308,72 @@ namespace QlikviewEnhancedUserControl
         {
             AboutBox1 box = new AboutBox1();
             box.ShowDialog();
+        }
+
+        private void rbtn_path_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void rbtn_doc_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button17_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.FileName = server + "_active-docs.csv";
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                textBox4.Text = saveFileDialog1.FileName;
+                Configuration config = ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
+                config.AppSettings.Settings["activedocspath"].Value = textBox4.Text;
+                config.Save(ConfigurationSaveMode.Modified);
+            }
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            timer1.Interval = (Int32)(numericUpDown1.Value * 1000);
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Windows.Forms.Application.ExecutablePath);
+            config.AppSettings.Settings["activedocsinterval"].Value = numericUpDown1.Value.ToString();
+            config.Save(ConfigurationSaveMode.Modified);
+            //button16.Enabled = false;
+            if (button16.Text == "Start")
+            {
+                timer1.Start();
+                button16.Text = "Stop";
+                numericUpDown1.Enabled = false;
+                button17.Enabled = false;
+                //button16.Enabled = false;
+                textBox4.Enabled = false;
+            }
+            else
+            {
+                timer1.Stop();
+                button16.Text = "Start";
+                numericUpDown1.Enabled = true;
+                //button16.Enabled = true;
+                button17.Enabled = true;
+                textBox4.Enabled = true;
+            }
+        }
+
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+            GetActiveUsers();
+            //if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            //{
+                if (dataListView2.Columns.Count > 0)
+                {
+                    OLVExporter ex = new OLVExporter(dataListView2, dataListView2.FilteredObjects);
+                    ex.IncludeColumnHeaders = false;
+                    string test = ex.ExportTo(OLVExporter.ExportFormat.CSV);
+                    string fileName = textBox4.Text;
+                    System.IO.File.AppendAllText(fileName, test);
+                }
+            //}
         }
     }
 }
