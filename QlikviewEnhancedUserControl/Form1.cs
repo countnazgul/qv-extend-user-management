@@ -24,7 +24,11 @@ namespace QlikviewEnhancedUserControl
         DataTable dtSelectedUSers = new DataTable();
         DataTable dtUserDocuments = new DataTable();
         DataTable dtUsersAndDocs = new DataTable();
+        DocumentNode dtDocSource = new DocumentNode();
+        DocumentNode dtDocTarget = new DocumentNode();
+
         bool sourceAdded = false;
+        bool targetAdded = false;
         Guid qvsId = new Guid("00000000-0000-0000-0000-000000000000");
         Guid dscId = new Guid("00000000-0000-0000-0000-000000000000");
         bool loadingVisible = false;
@@ -35,6 +39,7 @@ namespace QlikviewEnhancedUserControl
         TabPage tb2 = null;
         TabPage tb3 = null;
         int totalUserDocs = 0;
+        int SelectedTab = 0;
         //BrightIdeasSoftware.OLVColumn deleteColumn = new BrightIdeasSoftware.OLVColumn();
 
 
@@ -300,7 +305,10 @@ namespace QlikviewEnhancedUserControl
             dt.Columns.Add(dcUser);
             dt.Columns["User"].SetOrdinal(1);
 
-            backgroundWorker1.ReportProgress(dtDocs.Rows.Count, "totalDocs");
+            if (SelectedTab == 3)
+            {
+                backgroundWorker1.ReportProgress(dtDocs.Rows.Count, "totalDocs");
+            }
 
             for (var i = 0; i < dtDocs.Rows.Count; i++)
             {
@@ -360,8 +368,10 @@ namespace QlikviewEnhancedUserControl
                     dt.Rows.Add(dr);
                 }
 
-                backgroundWorker1.ReportProgress(i, "processeddocs");
-                //Thread.Sleep(200);
+                if (SelectedTab == 3)
+                {
+                    backgroundWorker1.ReportProgress(i, "processeddocs");
+                }
             }
             
 
@@ -382,7 +392,7 @@ namespace QlikviewEnhancedUserControl
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Refresh();
+            RefreshServices();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -390,6 +400,9 @@ namespace QlikviewEnhancedUserControl
             //timer1.Start();
             try
             {
+                dataListView4.Clear();
+                dataListView5.Clear();
+
                 DataTable dt = GetUserDocuments();
                 dataListView4.DataSource = dt;
 
@@ -415,11 +428,11 @@ namespace QlikviewEnhancedUserControl
             
         }
 
-        private void Refresh()
+        private void RefreshServices()
         {
             label3.Text = "";
 
-            //try
+            try
             {
                 Client = new QMSClient("BasicHttpBinding_IQMS", qms);
                 key = Client.GetTimeLimitedServiceKey();
@@ -440,14 +453,14 @@ namespace QlikviewEnhancedUserControl
                 tabControl1.TabPages.Add(tb2);
                 tabControl1.TabPages.Add(tb3);
             }
-            //catch (System.Exception ex)
-            //{
-            //    dataListView1.Clear();
-            //    tabControl1.TabPages.Remove(tb1);
-            //    tabControl1.TabPages.Remove(tb2);
-            //    tabControl1.TabPages.Remove(tb3);
-            //    label3.Text = "Cannot establish connection to the server.";
-            //}
+            catch (System.Exception ex)
+            {
+                dataListView1.Clear();
+                tabControl1.TabPages.Remove(tb1);
+                tabControl1.TabPages.Remove(tb2);
+                tabControl1.TabPages.Remove(tb3);
+                label3.Text = "Cannot establish connection to the server.";
+            }
         }
 
         /*private void exportNewData()
@@ -509,7 +522,7 @@ namespace QlikviewEnhancedUserControl
             //string test = ex.ExportTo(OLVExporter.ExportFormat.CSV);
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void UserSearch()
         {
             dataListView6.Clear();
 
@@ -549,6 +562,11 @@ namespace QlikviewEnhancedUserControl
             {
                 dataListView6.AutoResizeColumn(i, ColumnHeaderAutoResizeStyle.ColumnContent);
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            UserSearch();
         }
         
         private void button6_Click(object sender, EventArgs e)
@@ -590,20 +608,32 @@ namespace QlikviewEnhancedUserControl
             }
         }
 
+        private void FilterDocs()
+        {
+            try
+            {
+                var field = "";
+                if (rbtn_doc.Checked == true)
+                {
+                    field = "Name";
+                }
+                else
+                {
+                    field = "RelativePath";
+                }
+
+                //(dataGridView3.DataSource as DataTable).DefaultView.RowFilter = string.Concat(field, " LIKE '%", textBox2.Text, "%'"); //"RelativePath LIKE '%[,]" + textBox2.Text + "[,]%'";            
+                (dataListView4.DataSource as DataTable).DefaultView.RowFilter = string.Concat(field, " LIKE '%", textBox2.Text, "%'"); //"RelativePath LIKE '%[,]" + textBox2.Text + "[,]%'";            
+            }
+            catch (System.Exception ex)
+            {
+
+            }
+        }
+
         private void button7_Click(object sender, EventArgs e)
         {
-            var field = "";
-            if (rbtn_doc.Checked == true)
-            {
-                field = "Name";
-            }
-            else
-            {
-                field = "RelativePath";
-            }
-            
-            //(dataGridView3.DataSource as DataTable).DefaultView.RowFilter = string.Concat(field, " LIKE '%", textBox2.Text, "%'"); //"RelativePath LIKE '%[,]" + textBox2.Text + "[,]%'";            
-            (dataListView4.DataSource as DataTable).DefaultView.RowFilter = string.Concat(field, " LIKE '%", textBox2.Text, "%'"); //"RelativePath LIKE '%[,]" + textBox2.Text + "[,]%'";            
+            FilterDocs();
         }
 
         private void button8_Click(object sender, EventArgs e)
@@ -615,6 +645,9 @@ namespace QlikviewEnhancedUserControl
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //MessageBox.Show(tabControl1.SelectedIndex.ToString());
+            label2.Text = "";
+            label4.Text = "";
             DataColumn dcId = new DataColumn("Id");
             DataColumn dcName = new DataColumn("Name");
             dtSelectedUSers.Columns.Add(dcId);
@@ -625,7 +658,8 @@ namespace QlikviewEnhancedUserControl
             ToolTip1.SetToolTip(this.textBox1, "Single user or multiple users separated with ';'. Use '*' for wildcard");
             ToolTip1.SetToolTip(this.button12, "ADD user from the left to the documents on the right");
             ToolTip1.SetToolTip(this.button13, "REMOVE user from the left from the documents on the right");
-            ToolTip1.SetToolTip(this.textBox3, "For example: http://localhost:4799/QMS/Service");        
+            ToolTip1.SetToolTip(this.textBox3, "For example: http://localhost:4799/QMS/Service");
+            ToolTip1.SetToolTip(this.checkBox1, "If checked - append the missing users to target from source. If not checked - target will have the same users as source.");
 
             label3.Text = "";
             rbtn_doc.Checked = true;
@@ -692,6 +726,7 @@ namespace QlikviewEnhancedUserControl
             sourceAdded = true;
             DataRowView obj = dataListView4.SelectedObject as DataRowView;
             label2.Text = obj.Row["Name"].ToString();
+            button11.Enabled = true;
         }
 
         private void dataListView4_SelectionChanged(object sender, EventArgs e)
@@ -744,7 +779,7 @@ namespace QlikviewEnhancedUserControl
             dt.Columns.Add(fId);
             dt.Columns.Add(dId);
 
-
+            DataTable dt1 = new DataTable();
             var obj1 = dataListView4.SelectedObjects;
             for (var a = 0; a < obj1.Count; a++)
             {
@@ -754,7 +789,7 @@ namespace QlikviewEnhancedUserControl
                 dt.ImportRow(dataBoundItem);
 
 
-                DataTable dt1 = GetDocumentsMetadata(dt);
+                dt1 = GetDocumentsMetadata(dt);
                 dataListView5.DataSource = dt1;
 
                 for (var i = 0; i < dataListView5.Columns.Count; i++)
@@ -763,23 +798,68 @@ namespace QlikviewEnhancedUserControl
                 }
             }
 
+            if (sourceAdded == false)
+            {
+                //dtDocSource = dt;
+                dtDocSource.FolderID = new Guid(dt1.Rows[0]["FolderID"].ToString());
+                dtDocSource.ID = new Guid(dt1.Rows[0]["ID"].ToString());
+                dtDocSource.Name = dt1.Rows[0]["Name"].ToString();
+                dtDocSource.RelativePath = dt1.Rows[0]["RelativePath"].ToString();
+                dtDocSource.IsOrphan = Convert.ToBoolean(dt1.Rows[0]["IsOrphan"].ToString());
+                dtDocSource.IsSubFolder = Convert.ToBoolean(dt1.Rows[0]["IsSubFolder"].ToString());
+                dtDocSource.TaskCount = Convert.ToInt32(dt1.Rows[0]["TaskCount"].ToString());
+                dtDocSource.Type = DocumentType.User;
+            }
+            else if(targetAdded == false) 
+            {
+                dtDocTarget.FolderID = new Guid(dt1.Rows[0]["FolderID"].ToString());
+                dtDocTarget.ID = new Guid(dt1.Rows[0]["ID"].ToString());
+                dtDocTarget.Name = dt1.Rows[0]["Name"].ToString();
+                dtDocTarget.RelativePath = dt1.Rows[0]["RelativePath"].ToString();
+                dtDocTarget.IsOrphan = Convert.ToBoolean(dt1.Rows[0]["IsOrphan"].ToString());
+                dtDocTarget.IsSubFolder = Convert.ToBoolean(dt1.Rows[0]["IsSubFolder"].ToString());
+                dtDocTarget.TaskCount = Convert.ToInt32(dt1.Rows[0]["TaskCount"].ToString());
+                dtDocTarget.Type = DocumentType.User;
+            }
+
 
         }
 
 
         private void btn_AddTarget_Click(object sender, EventArgs e)
         {
-            DataRowView obj = dataListView4.SelectedObject as DataRowView;
-            label4.Text = obj.Row["Name"].ToString();
+            try
+            {
+                DataRowView obj = dataListView4.SelectedObject as DataRowView;
+                label4.Text = obj.Row["Name"].ToString();
+            }
+            catch (System.Exception ex)
+            {
+
+            }
+            finally
+            {
+                checkBox1.Enabled = true;
+                button10.Enabled = true;
+                targetAdded = true;
+            }
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
+            dtDocSource = null;
+            dtDocTarget = null;
             sourceAdded = false;
-            btn_AddTarget.Enabled = false;
-            btn_AddSource.Enabled = false;
+            //btn_AddTarget.Enabled = false;
+            //btn_AddSource.Enabled = false;
             label2.Text = "";
             label4.Text = "";
+            button10.Enabled = false;
+            checkBox1.Enabled = false;
+            btn_AddSource.Enabled = false;
+            btn_AddTarget.Enabled = false;
+            sourceAdded = false;
+            targetAdded = false;
         }
 
         private void btn_GetDocMetadata_Click(object sender, EventArgs e)
@@ -885,26 +965,129 @@ namespace QlikviewEnhancedUserControl
 
         private void button10_Click(object sender, EventArgs e)
         {
-            //label1.Text = "Loading ...";
-            //label1.ForeColor = Color.Red;
-            //timer1.Start();
+
+            List<DocumentAccessEntry> forRemove = new List<DocumentAccessEntry>();
+            List<string> toAdd = new List<string>();
+
+            var source = Client.GetDocumentMetaData(dtDocSource, DocumentMetaDataScope.Authorization);
+            var target = Client.GetDocumentMetaData(dtDocTarget, DocumentMetaDataScope.Authorization);
+
+            if (target.Authorization.Access.Count == 0)
+            {
+                for (var s = 0; s < source.Authorization.Access.Count; s++)
+                {
+                    DocumentAccessEntry dae = new DocumentAccessEntry();
+                    dae.UserName = source.Authorization.Access[s].UserName.ToString();
+                    dae.DayOfWeekConstraints = new List<DayOfWeek>();
+                    target.Authorization.Access.Add(dae);
+                }
+            }
+            else if (checkBox1.Checked == false)
+            {
+
+                 if (source.Authorization.Access.Count == 0)
+                {
+                    target.Authorization.Access.Clear();
+                }
+                else
+                {
+
+                    for (var t = 0; t < target.Authorization.Access.Count; t++)
+                    {
+                        bool exists = false;
+                        for (var s = 0; s < source.Authorization.Access.Count; s++)
+                        {
+                            if (target.Authorization.Access[t].UserName == source.Authorization.Access[s].UserName)
+                            {
+                                exists = true;
+                            }
+                        }
+
+                        if (exists == false)
+                        {
+                            forRemove.Add(target.Authorization.Access[t]);
+                        }
+
+                        for (var r = 0; r < forRemove.Count; r++)
+                        {
+                            target.Authorization.Access.Remove(forRemove[r]);
+                        }
+
+                    }
+
+                    for (var s = 0; s < source.Authorization.Access.Count; s++)
+                    {
+                        bool exists = false;
+                        for (var t = 0; t < target.Authorization.Access.Count; t++)
+                        {
+                            if (source.Authorization.Access[s].UserName == target.Authorization.Access[t].UserName)
+                            {
+                                exists = true;
+                            }
+                        }
+
+                        if (exists == false)
+                        {
+                            toAdd.Add(source.Authorization.Access[s].UserName.ToString());
+                        }
+                    }
+
+                    for (var a = 0; a < toAdd.Count; a++)
+                    {
+                        DocumentAccessEntry dae = new DocumentAccessEntry();
+                        dae.UserName = toAdd[a].ToString();
+                        dae.DayOfWeekConstraints = new List<DayOfWeek>();
+                        target.Authorization.Access.Add(dae);
+                    }
+                }
+            }
+            else
+            {
+                for (var s = 0; s < source.Authorization.Access.Count; s++)
+                {
+                    bool exists = false;
+                    for (var t = 0; t < target.Authorization.Access.Count; t++)
+                    {
+                        if (source.Authorization.Access[s].UserName == target.Authorization.Access[t].UserName)
+                        {
+                            exists = true;
+                        }
+                    }
+
+                    if (exists == false)
+                    {
+                        toAdd.Add(source.Authorization.Access[s].UserName.ToString());
+                    }
+                }
+
+                for (var a = 0; a < toAdd.Count; a++)
+                {
+                    DocumentAccessEntry dae = new DocumentAccessEntry();
+                    dae.UserName = toAdd[a].ToString();
+                    dae.DayOfWeekConstraints = new List<DayOfWeek>();
+                    target.Authorization.Access.Add(dae);
+                }
+            }
+
+            Client.SaveDocumentMetaData(target);
+            //btn_AddSource.Enabled = false;
+            btn_AddTarget.Enabled = false;
+            label2.Text = "";
+            label4.Text = "";
+            //label2.Enabled = false;
+            //label4.Enabled = false;
+            checkBox1.Enabled = false;
+            button10.Enabled = false;
+            button11.Enabled = false;
+            sourceAdded = false;
+            targetAdded = false;
+
+            GetDocMetadata();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            //label1.Text = "Loading ...";
-            //label1.ForeColor = Color.Red;
 
-            //if (loadingVisible == false)
-            //{
-            //    label1.Visible = true;
-            //    loadingVisible = true;
-            //}
-            //else
-            //{
-            //    label1.Visible = false;
-            //    loadingVisible = false;
-            //}
         }
 
         private void button14_Click(object sender, EventArgs e)
@@ -1069,6 +1252,27 @@ namespace QlikviewEnhancedUserControl
                         }
                     }
                 }
+            }
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedTab = tabControl1.SelectedIndex;
+        }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                UserSearch();
+            }
+        }
+
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                FilterDocs();
             }
         }
     }

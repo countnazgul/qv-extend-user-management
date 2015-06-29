@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button15 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.button14 = new System.Windows.Forms.Button();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -77,7 +78,6 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.restoreToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button15 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataListView1)).BeginInit();
@@ -104,6 +104,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1165, 468);
             this.tabControl1.TabIndex = 2;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -120,6 +121,17 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Services";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // button15
+            // 
+            this.button15.Location = new System.Drawing.Point(1056, 6);
+            this.button15.Name = "button15";
+            this.button15.Size = new System.Drawing.Size(75, 23);
+            this.button15.TabIndex = 22;
+            this.button15.Text = "button15";
+            this.button15.UseVisualStyleBackColor = true;
+            this.button15.Visible = false;
+            this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
             // label3
             // 
@@ -319,11 +331,11 @@
             this.dataListView5.DataSource = null;
             this.dataListView5.FullRowSelect = true;
             this.dataListView5.HasCollapsibleGroups = false;
-            this.dataListView5.Location = new System.Drawing.Point(309, 235);
+            this.dataListView5.Location = new System.Drawing.Point(309, 263);
             this.dataListView5.Name = "dataListView5";
             this.dataListView5.ShowCommandMenuOnRightClick = true;
             this.dataListView5.ShowGroups = false;
-            this.dataListView5.Size = new System.Drawing.Size(842, 193);
+            this.dataListView5.Size = new System.Drawing.Size(842, 165);
             this.dataListView5.TabIndex = 31;
             this.dataListView5.UseCompatibleStateImageBehavior = false;
             this.dataListView5.UseExplorerTheme = true;
@@ -333,7 +345,7 @@
             // 
             // btn_AddTarget
             // 
-            this.btn_AddTarget.Location = new System.Drawing.Point(595, 394);
+            this.btn_AddTarget.Location = new System.Drawing.Point(653, 236);
             this.btn_AddTarget.Name = "btn_AddTarget";
             this.btn_AddTarget.Size = new System.Drawing.Size(75, 23);
             this.btn_AddTarget.TabIndex = 30;
@@ -343,7 +355,7 @@
             // 
             // btn_AddSource
             // 
-            this.btn_AddSource.Location = new System.Drawing.Point(309, 394);
+            this.btn_AddSource.Location = new System.Drawing.Point(309, 236);
             this.btn_AddSource.Name = "btn_AddSource";
             this.btn_AddSource.Size = new System.Drawing.Size(75, 23);
             this.btn_AddSource.TabIndex = 29;
@@ -354,7 +366,10 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(906, 398);
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Enabled = false;
+            this.checkBox1.Location = new System.Drawing.Point(978, 240);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(63, 17);
             this.checkBox1.TabIndex = 28;
@@ -364,19 +379,21 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(1056, 394);
+            this.button11.Enabled = false;
+            this.button11.Location = new System.Drawing.Point(1102, 236);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(75, 23);
+            this.button11.Size = new System.Drawing.Size(49, 23);
             this.button11.TabIndex = 27;
-            this.button11.Text = "Clear";
+            this.button11.Text = "Cancel";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(975, 394);
+            this.button10.Enabled = false;
+            this.button10.Location = new System.Drawing.Point(1045, 236);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(75, 23);
+            this.button10.Size = new System.Drawing.Size(51, 23);
             this.button10.TabIndex = 26;
             this.button10.Text = "Copy";
             this.button10.UseVisualStyleBackColor = true;
@@ -385,7 +402,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(676, 401);
+            this.label4.Location = new System.Drawing.Point(734, 241);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 25;
@@ -394,7 +411,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(392, 401);
+            this.label2.Location = new System.Drawing.Point(390, 241);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 13);
             this.label2.TabIndex = 23;
@@ -456,6 +473,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(161, 20);
             this.textBox2.TabIndex = 12;
+            this.textBox2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyDown);
             // 
             // button7
             // 
@@ -494,6 +512,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(240, 20);
             this.textBox1.TabIndex = 6;
+            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // button3
             // 
@@ -604,31 +623,21 @@
             this.restoreToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(113, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(114, 48);
             // 
             // restoreToolStripMenuItem
             // 
             this.restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
-            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.restoreToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.restoreToolStripMenuItem.Text = "Restore";
             this.restoreToolStripMenuItem.Click += new System.EventHandler(this.restoreToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(112, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
-            // button15
-            // 
-            this.button15.Location = new System.Drawing.Point(1056, 6);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(75, 23);
-            this.button15.TabIndex = 22;
-            this.button15.Text = "button15";
-            this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
             // Form1
             // 

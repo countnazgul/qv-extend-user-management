@@ -29,3 +29,4 @@ S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserContr
 S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\QlikviewEnhancedUserControl.pdb
 S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\ObjectListView.pdb
 S:\Development\Stefan\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\bin\Debug\ObjectListView.xml
+D:\Projects\Personal\GitHub\qv-extend-user-management\QlikviewEnhancedUserControl\obj\x86\Debug\QlikviewEnhancedUserControl.csprojResolveAssemblyReference.cache
