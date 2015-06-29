@@ -706,7 +706,7 @@ namespace QlikviewEnhancedUserControl
             label1.Visible = true;
             button9.Enabled = false;
             userDocExport.Enabled = false;
-            timer1.Start();
+            //timer1.Start();
             backgroundWorker1.RunWorkerAsync();
 
             //Thread.Sleep(5000);
@@ -1159,7 +1159,7 @@ namespace QlikviewEnhancedUserControl
 
             if (e.UserState.ToString() == "done")
             {
-                timer1.Stop();
+                //timer1.Stop();
                 button9.Enabled = false;
                 userDocExport.Enabled = false;
 
@@ -1225,7 +1225,10 @@ namespace QlikviewEnhancedUserControl
 
         private void button15_Click(object sender, EventArgs e)
         {
-            PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
+            AboutBox1 box = new AboutBox1();
+            box.ShowDialog();
+
+            /*PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
 
             GroupPrincipal group = GroupPrincipal.FindByIdentity(ctx, "systems\\GRP-Qlikview-GrBI-Mob-Users-G");
             var users = group.GetMembers();
@@ -1252,7 +1255,7 @@ namespace QlikviewEnhancedUserControl
                         }
                     }
                 }
-            }
+            }*/
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -1274,6 +1277,12 @@ namespace QlikviewEnhancedUserControl
             {
                 FilterDocs();
             }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            AboutBox1 box = new AboutBox1();
+            box.ShowDialog();
         }
     }
 }

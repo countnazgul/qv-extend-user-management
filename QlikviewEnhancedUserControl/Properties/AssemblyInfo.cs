@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Qlikview Enhanced User Control")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Manage Qlikview (server) user.\r\n\r\n* Assign/remove multiple users to multiple documents\r\n* Copy userbase between documents.\r\n\r\n Repo: https://github.com/countnazgul/qv-extend-user-management \r\n Issues: https://github.com/countnazgul/qv-extend-user-management/issues")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("stefan.stoichev@gmail.com")]
 [assembly: AssemblyProduct("Qlikview Enhanced User Control")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.4.0.0")]
-[assembly: AssemblyFileVersion("0.4.0.0")]
+[assembly: AssemblyVersion("0.4.1.0")]
+[assembly: AssemblyFileVersion("0.4.1.0")]
